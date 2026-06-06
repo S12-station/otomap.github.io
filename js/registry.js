@@ -30,22 +30,26 @@ function fetchCsv(path) {
   });
 }
 
-// 起動時に全CSVを読み込む
+
+// マスタデータを格納するグローバル変数の上に以下を追加
+let existingWorks = [];
+
+// 起動時に全CSVと既存作品データを読み込む (initMasterData関数を修正)
 async function initMasterData() {
-  const [comRes, lineRes, stRes] = await Promise.all([
+  const [comRes, lineRes, stRes, madsRes] = await Promise.all([
     fetchCsv('csv/company.csv'),
     fetchCsv('csv/line.csv'),
-    fetchCsv('csv/station.csv')
+    fetchCsv('csv/station.csv'),
+    fetch(GAS_URL).then(res => res.json()).catch(() => []) // ★GASデータも取得
   ]);
 
-  masterData.companies = comRes.filter(c => c.company_cd); // 空行除外
+  masterData.companies = comRes.filter(c => c.company_cd);
   masterData.lines = lineRes.filter(l => l.line_cd);
   masterData.stations = stRes.filter(s => s.station_cd);
+  existingWorks = madsRes; // ★既存作品を保存
 
   // 事業者セレクトボックスを構築
   comSelect.innerHTML = '<option value="">選択してください</option>';
-  
-  // 並び順(e_sort)でソート
   masterData.companies.sort((a, b) => a.e_sort - b.e_sort).forEach(c => {
     const opt = document.createElement('option');
     opt.value = c.company_cd;
@@ -102,17 +106,41 @@ lineSelect.addEventListener('change', () => {
 });
 
 // 駅変更 -> 地図移動
+// 駅変更 -> 地図移動 ＆ サジェスト表示 (stSelectのchangeイベントを修正)
 stSelect.addEventListener('change', () => {
   const selectedOpt = stSelect.options[stSelect.selectedIndex];
-  if (!selectedOpt.value) return;
+  const suggestionBox = document.getElementById('suggestionBox');
+  const suggestionList = document.getElementById('suggestionList');
 
+  // 未選択に戻された場合は非表示にする
+  if (!selectedOpt.value) {
+    suggestionBox.style.display = 'none';
+    return;
+  }
+
+  const targetStationCd = selectedOpt.value;
   const lat = parseFloat(selectedOpt.dataset.lat);
   const lon = parseFloat(selectedOpt.dataset.lon);
 
+  // マップの移動処理
   if (currentMarker) map.removeLayer(currentMarker);
-  
   currentMarker = L.marker([lat, lon]).addTo(map);
   map.setView([lat, lon], 15);
+
+  // ★ここから追加：既存作品の検索とサジェスト表示
+  const alreadyRegistered = existingWorks.filter(work => String(work.station_cd) === String(targetStationCd));
+
+  if (alreadyRegistered.length > 0) {
+    suggestionList.innerHTML = '';
+    alreadyRegistered.forEach(work => {
+      const li = document.createElement('li');
+      li.innerHTML = `<a href="${work.url}" target="_blank" style="color: var(--ios-blue); text-decoration: none;">${work.title}</a> <span style="color:#666; font-size:12px;">[${work.category}]</span>`;
+      suggestionList.appendChild(li);
+    });
+    suggestionBox.style.display = 'block'; // 一致したら表示
+  } else {
+    suggestionBox.style.display = 'none'; // 無ければ隠す
+  }
 });
 
 // 送信処理

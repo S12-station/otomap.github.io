@@ -142,13 +142,12 @@ function renderList(works) {
     const remarkHtml = work.remarks ? `<div style="font-size: 12px; color: #666; margin-top: 6px;">💬 ${work.remarks}</div>` : '';
     
     li.innerHTML = `
-      <a href="${work.url}" target="_blank" class="work-title">${work.title}</a>
+      <a href="${work.url}" target="_blank" class="work-title">${work.title} <span style="font-size: 12px; color: #666;">${work.stationName}駅</span></a>
       <div class="work-meta" style="margin-top: 4px;">
         <table style="table-layout: fixed; width: 100%; border-collapse: collapse;">
           <tr style="font-size: 14px; color: #555;">
             <td>${work.companyName}</td>
             <td>${work.lineName}</td>
-            <td>${work.stationName}駅</td>
             <td>${work.category}</td>
           </tr>
         </table>
