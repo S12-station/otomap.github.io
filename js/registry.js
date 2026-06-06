@@ -30,7 +30,6 @@ function fetchCsv(path) {
   });
 }
 
-
 // マスタデータを格納するグローバル変数の上に以下を追加
 let existingWorks = [];
 
@@ -105,8 +104,7 @@ lineSelect.addEventListener('change', () => {
   });
 });
 
-// 駅変更 -> 地図移動
-// 駅変更 -> 地図移動 ＆ サジェスト表示 (stSelectのchangeイベントを修正)
+// 駅変更 -> 地図移動 ＆ サジェスト表示
 stSelect.addEventListener('change', () => {
   const selectedOpt = stSelect.options[stSelect.selectedIndex];
   const suggestionBox = document.getElementById('suggestionBox');
@@ -127,7 +125,7 @@ stSelect.addEventListener('change', () => {
   currentMarker = L.marker([lat, lon]).addTo(map);
   map.setView([lat, lon], 15);
 
-  // ★ここから追加：既存作品の検索とサジェスト表示
+  // 既存作品の検索とサジェスト表示
   const alreadyRegistered = existingWorks.filter(work => String(work.station_cd) === String(targetStationCd));
 
   if (alreadyRegistered.length > 0) {
@@ -144,8 +142,6 @@ stSelect.addEventListener('change', () => {
 });
 
 // 送信処理
-// 【js/registry.js の送信処理部分を差し替え】
-
 document.getElementById('addForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn = document.getElementById('submitBtn');
@@ -156,8 +152,7 @@ document.getElementById('addForm').addEventListener('submit', async (e) => {
     const urlObj = new URL(urlInput);
     const hostname = urlObj.hostname;
     
-    // 許可するドメイン（短縮URLも含む）
-// 許可するドメイン（SoundCloudを追加）
+    // 許可するドメイン（SoundCloudを追加）
     const isValid = 
       hostname.includes('youtube.com') || 
       hostname.includes('youtu.be') || 
@@ -165,10 +160,10 @@ document.getElementById('addForm').addEventListener('submit', async (e) => {
       hostname.includes('nico.ms') ||
       hostname.includes('bilibili.com') ||
       hostname.includes('b23.tv') ||
-      hostname.includes('soundcloud.com'); // 追加
+      hostname.includes('soundcloud.com'); 
 
     if (!isValid) {
-      alert('エラー: YouTube、ニコニコ動画、BilibiliのURLのみ登録可能です。');
+      alert('エラー: YouTube、ニコニコ動画、Bilibili、SoundCloudのURLのみ登録可能です。');
       return; // 処理をここで中断
     }
   } catch (err) {
@@ -180,12 +175,16 @@ document.getElementById('addForm').addEventListener('submit', async (e) => {
   btn.disabled = true;
   btn.innerText = '送信中...';
 
-// js/registry.js の送信処理内
+  // 選択されている駅の「テキスト（駅名）」を取得
+  const selectedOpt = stSelect.options[stSelect.selectedIndex];
+  const stationName = selectedOpt.textContent;
+
   const payload = {
     station_cd: stSelect.value,
+    station_name: stationName, // ★ここを追加
     title: document.getElementById('title').value,
     url: urlInput,
-    remarks: document.getElementById('remarks').value, // ← ここを追加
+    remarks: document.getElementById('remarks').value,
     category: document.getElementById('category').value
   };
 
@@ -199,6 +198,8 @@ document.getElementById('addForm').addEventListener('submit', async (e) => {
     
     if (result.status === 'success') {
       alert('登録が完了しました。');
+      // 成功時にマップ画面へ戻す場合はここのコメントアウトを外してください
+      // window.location.href = 'index.html';
     } else {
       alert('エラー: ' + result.message);
     }
