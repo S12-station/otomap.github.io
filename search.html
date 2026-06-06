@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>検索 - 音MAP</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .search-container {
+      padding: 10px 16px;
+      background: var(--ios-header-bg);
+      position: sticky;
+      top: calc(44px + env(safe-area-inset-top, 20px));
+      z-index: 999;
+      border-bottom: 0.5px solid var(--ios-border);
+    }
+    
+    /* 追加: プルダウン用のレイアウト */
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .filter-select {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--ios-border);
+      background-color: #fff;
+      font-size: 14px;
+      outline: none;
+      color: #000;
+    }
+    .filter-select:disabled {
+      background-color: #E5E5EA;
+      color: #8E8E93;
+    }
+
+    .search-bar {
+      width: 100%;
+      padding: 8px 30px;
+      border-radius: 10px;
+      border: none;
+      background: #E3E3E8 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%238E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>') no-repeat 8px center;
+      font-size: 17px;
+      box-sizing: border-box;
+      outline: none;
+    }
+    
+    .work-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      background: var(--ios-cell-bg);
+      border-top: 0.5px solid var(--ios-border);
+      border-bottom: 0.5px solid var(--ios-border);
+    }
+    .work-item { padding: 12px 16px; position: relative; display: flex; flex-direction: column; }
+    .work-item:not(:last-child)::after {
+      content: ''; position: absolute; bottom: 0; left: 16px; right: 0;
+      height: 0.5px; background-color: var(--ios-border);
+    }
+    .work-title { font-size: 17px; font-weight: 500; margin-bottom: 4px; color: #000; text-decoration: none; }
+    .work-meta { font-size: 13px; color: #8E8E93; }
+    .work-category { display: inline-block; padding: 2px 6px; border-radius: 4px; background: #E5E5EA; font-size: 11px; color: #3A3A3C; margin-left: 6px; }
+    .no-results { text-align: center; padding: 40px 20px; color: #8E8E93; font-size: 15px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="header-btn back">マップ</a>
+    <h1>登録作品一覧</h1>
+    <div class="header-spacer"></div>
+  </header>
+
+  <main style="padding-top: calc(44px + env(safe-area-inset-top, 20px));">
+    <div class="search-container">
+      <div class="filter-group">
+        <select id="searchCompany" class="filter-select">
+          <option value="">すべての事業者</option>
+        </select>
+        <select id="searchLine" class="filter-select" disabled>
+          <option value="">すべての路線</option>
+        </select>
+      </div>
+      <input type="text" id="searchInput" class="search-bar" placeholder="タイトルや駅名で検索...">
+    </div>
+    
+    <ul class="work-list" id="workList">
+      <li class="no-results">読み込み中...</li>
+    </ul>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="js/search.js"></script>
+</body>
+</html>

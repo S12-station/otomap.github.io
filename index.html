@@ -4,120 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>音MAP</title>
-  
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  
+  <link rel="stylesheet" href="css/style.css" />
   <style>
-    /* iOS風ベーススタイル */
-    :root {
-      --ios-bg: #F2F2F7;
-      --ios-blue: #007AFF;
-      --ios-header-bg: rgba(248, 248, 248, 0.9);
-      --ios-border: #C6C6C8;
-    }
-    
-    body, html {
-      margin: 0; padding: 0; height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif;
-      background-color: var(--ios-bg);
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ナビゲーションバー */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 44px;
-      padding-top: env(safe-area-inset-top, 20px); /* ノッチ対応 */
-      background: var(--ios-header-bg);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-bottom: 0.5px solid var(--ios-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    header h1 {
-      font-size: 17px;
-      font-weight: 600;
-      margin: 0;
-      color: #000;
-    }
-
-    .add-btn {
-      position: absolute;
-      right: 16px;
-      font-size: 24px;
-      color: var(--ios-blue);
-      text-decoration: none;
-      font-weight: 400;
-      line-height: 1;
-    }
-
-    /* マップエリア */
+    /* index固有のスタイル */
     #map {
       width: 100%;
       height: 100vh;
       padding-top: calc(44px + env(safe-area-inset-top, 20px));
       box-sizing: border-box;
     }
-
-    /* カスタムポップアップ */
-    .leaflet-popup-content-wrapper {
-      border-radius: 12px;
-    }
-    .popup-title { font-weight: bold; font-size: 15px; margin-bottom: 4px; }
-    .popup-meta { color: #8E8E93; font-size: 13px; margin-bottom: 8px; }
-    .popup-link { display: block; color: var(--ios-blue); text-decoration: none; font-weight: 500; }
   </style>
 </head>
 <body>
 
-  <header>
+ <header>
+    <a href="search.html" class="header-btn" style="font-size: 20px; text-decoration: none;">🔍</a>
     <h1>音MAP</h1>
-    <a href="registry.html" class="add-btn">+</a>
+    <a href="registry.html" class="header-btn add">+</a>
   </header>
   
   <div id="map"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    const GAS_URL = 'YOUR_GAS_WEBAPP_URL';
-
-    // マップ初期化 (札幌駅周辺)
-    const map = L.map('map', { zoomControl: false }).setView([43.0686, 141.3508], 12);
-    
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap'
-    }).addTo(map);
-
-    // ズームコントロールの位置を右下に移動（iOSライクな配置のため）
-    L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-    async function loadPins() {
-      try {
-        const response = await fetch(`${GAS_URL}?action=get_mads`);
-        const mads = await response.json();
-        
-        mads.forEach(mad => {
-          if(mad.lat && mad.lon) {
-            const marker = L.marker([mad.lat, mad.lon]).addTo(map);
-            const popupHtml = `
-              <div class="popup-title">${mad.title}</div>
-              <div class="popup-meta">📍 ${mad.station_name} [${mad.category}]</div>
-              <a href="${mad.url}" target="_blank" class="popup-link">動画を見る</a>
-            `;
-            marker.bindPopup(popupHtml);
-          }
-        });
-      } catch (e) {
-        console.error('データの取得に失敗しました', e);
-      }
-    }
-
-    loadPins();
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="js/index.js"></script>
 </body>
 </html>

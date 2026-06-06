@@ -4,107 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>登録 - 音MAP</title>
-  
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  
+  <link rel="stylesheet" href="css/style.css" />
   <style>
-    :root {
-      --ios-bg: #F2F2F7;
-      --ios-blue: #007AFF;
-      --ios-header-bg: rgba(248, 248, 248, 0.9);
-      --ios-border: #C6C6C8;
-      --ios-cell-bg: #FFFFFF;
-    }
-    
-    body, html {
-      margin: 0; padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif;
-      background-color: var(--ios-bg);
-      -webkit-font-smoothing: antialiased;
-      color: #000;
-      max-width: 800px;
-        margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* ナビゲーションバー */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 44px;
-      padding-top: env(safe-area-inset-top, 20px);
-      background: var(--ios-header-bg);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-bottom: 0.5px solid var(--ios-border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-left: 16px; padding-right: 16px;
-      z-index: 1000;
-    }
-
-    header h1 { font-size: 17px; font-weight: 600; margin: 0; position: absolute; left: 50%; transform: translateX(-50%); }
-    .back-btn { color: var(--ios-blue); text-decoration: none; font-size: 17px; display: flex; align-items: center; }
-    .back-btn::before { content: '‹'; font-size: 26px; margin-right: 4px; line-height: 1; }
-
-    /* メインコンテンツ */
-    main {
-      padding-top: calc(64px + env(safe-area-inset-top, 20px));
-      padding-bottom: 40px;
-    }
-
-    .section-title {
-      font-size: 13px;
-      color: #6D6D72;
-      text-transform: uppercase;
-      margin: 20px 16px 8px;
-    }
-
-    /* iOS風リストフォーム */
-    .list-group {
-      background: var(--ios-cell-bg);
-      border-top: 0.5px solid var(--ios-border);
-      border-bottom: 0.5px solid var(--ios-border);
-    }
-
-    .list-cell {
-      display: flex;
-      align-items: center;
-      padding: 12px 16px;
-      position: relative;
-    }
-    
-    .list-cell:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 16px; right: 0;
-      height: 0.5px;
-      background-color: var(--ios-border);
-    }
-
-    .list-cell label {
-      width: 100px;
-      font-size: 17px;
-      flex-shrink: 0;
-    }
-
-    .list-cell input, .list-cell select {
-      flex-grow: 1;
-      border: none;
-      background: transparent;
-      font-size: 17px;
-      color: var(--ios-blue);
-      text-align: right;
-      outline: none;
-      appearance: none; /* デフォルトの矢印を消す */
-    }
-
-    .list-cell input::placeholder { color: #C7C7CC; }
-    .list-cell select { direction: rtl; } /* セレクトボックスのテキストを右寄せ */
-    .list-cell select option { direction: ltr; }
-
-    /* プレビューマップ */
+    /* registry固有のスタイル */
     #previewMap {
       height: 200px;
       width: 100%;
@@ -112,29 +15,15 @@
       margin-top: -0.5px;
       border-bottom: 0.5px solid var(--ios-border);
     }
-
-    /* 登録ボタン */
-    .btn-container { padding: 24px 16px; }
-    .submit-btn {
-      width: 100%;
-      background-color: var(--ios-blue);
-      color: white;
-      border: none;
-      padding: 14px;
-      font-size: 17px;
-      font-weight: 600;
-      border-radius: 12px;
-      cursor: pointer;
-    }
-    .submit-btn:disabled { background-color: #A2C8F2; }
   </style>
 </head>
 <body>
 
   <header>
-    <a href="index.html" class="back-btn">マップ</a>
+    <a href="index.html" class="header-btn back">マップ</a>
     <h1>新規登録</h1>
-    <div style="width: 50px;"></div> </header>
+    <div class="header-spacer"></div>
+  </header>
 
   <main>
     <form id="addForm">
@@ -144,7 +33,7 @@
         <div class="list-cell">
           <label>事業者</label>
           <select id="companySelect" required>
-            <option value="">選択してください</option>
+            <option value="">読込中...</option>
           </select>
         </div>
         <div class="list-cell">
@@ -173,6 +62,12 @@
           <label>URL</label>
           <input type="url" id="url" placeholder="https://..." required>
         </div>
+
+        <div class="list-cell">
+          <label>備考</label>
+          <input type="text" id="remarks" placeholder="任意 (例: 1:23～見どころ)">
+        </div>
+
         <div class="list-cell">
           <label>カテゴリ</label>
           <select id="category" required>
@@ -191,120 +86,7 @@
   </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    const GAS_URL = 'YOUR_GAS_WEBAPP_URL';
-    
-    // プレビューマップの初期化 (最初は日本全体)
-    const map = L.map('previewMap', { zoomControl: false, dragging: false }).setView([36.2048, 138.2529], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-    let currentMarker = null;
-
-    // 要素の取得
-    const comSelect = document.getElementById('companySelect');
-    const lineSelect = document.getElementById('lineSelect');
-    const stSelect = document.getElementById('stationSelect');
-
-    // 1. 起動時に事業者を取得
-    async function loadCompanies() {
-      const res = await fetch(`${GAS_URL}?action=get_companies`);
-      const companies = await res.json();
-      companies.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.company_cd;
-        opt.textContent = c.company_name;
-        comSelect.appendChild(opt);
-      });
-    }
-
-    // 2. 事業者変更 -> 路線を取得
-    comSelect.addEventListener('change', async () => {
-      lineSelect.innerHTML = '<option value="">選択してください</option>';
-      stSelect.innerHTML = '<option value="">路線を選択</option>';
-      stSelect.disabled = true;
-
-      if (!comSelect.value) { lineSelect.disabled = true; return; }
-      
-      lineSelect.disabled = false;
-      const res = await fetch(`${GAS_URL}?action=get_lines&company_cd=${comSelect.value}`);
-      const lines = await res.json();
-      lines.forEach(l => {
-        const opt = document.createElement('option');
-        opt.value = l.line_cd;
-        opt.textContent = l.line_name;
-        lineSelect.appendChild(opt);
-      });
-    });
-
-    // 3. 路線変更 -> 駅を取得
-    lineSelect.addEventListener('change', async () => {
-      stSelect.innerHTML = '<option value="">選択してください</option>';
-      if (!lineSelect.value) { stSelect.disabled = true; return; }
-
-      stSelect.disabled = false;
-      const res = await fetch(`${GAS_URL}?action=get_stations&line_cd=${lineSelect.value}`);
-      const stations = await res.json();
-      stations.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s.station_cd;
-        opt.textContent = s.station_name;
-        // 座標データをoption要素に持たせておく
-        opt.dataset.lat = s.lat;
-        opt.dataset.lon = s.lon;
-        stSelect.appendChild(opt);
-      });
-    });
-
-    // 4. 駅変更 -> マップにピンを刺す
-    stSelect.addEventListener('change', () => {
-      const selectedOpt = stSelect.options[stSelect.selectedIndex];
-      if (!selectedOpt.value) return;
-
-      const lat = parseFloat(selectedOpt.dataset.lat);
-      const lon = parseFloat(selectedOpt.dataset.lon);
-
-      if (currentMarker) map.removeLayer(currentMarker);
-      
-      currentMarker = L.marker([lat, lon]).addTo(map);
-      map.setView([lat, lon], 15);
-    });
-
-    // 送信処理
-    document.getElementById('addForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
-      btn.innerText = '送信中...';
-
-      const payload = {
-        station_cd: stSelect.value,
-        title: document.getElementById('title').value,
-        url: document.getElementById('url').value,
-        category: document.getElementById('category').value
-      };
-
-      try {
-        const res = await fetch(GAS_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify(payload)
-        });
-        const result = await res.json();
-        if (result.status === 'success') {
-          alert('登録が完了しました。');
-          window.location.href = 'index.html'; // 成功したらマップへ戻る
-        } else {
-          alert('エラー: ' + result.message);
-        }
-      } catch (err) {
-        alert('通信に失敗しました。');
-      } finally {
-        btn.disabled = false;
-        btn.innerText = '登録する';
-      }
-    });
-
-    // 初期化実行
-    loadCompanies();
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="js/registry.js"></script>
 </body>
 </html>
