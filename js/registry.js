@@ -199,7 +199,6 @@ document.getElementById('addForm').addEventListener('submit', async (e) => {
     
     if (result.status === 'success') {
       alert('登録が完了しました。');
-      window.location.href = 'index.html';
     } else {
       alert('エラー: ' + result.message);
     }
