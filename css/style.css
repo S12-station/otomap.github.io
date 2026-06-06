@@ -143,3 +143,16 @@ main {
 .popup-title { font-weight: bold; font-size: 15px; margin-bottom: 4px; }
 .popup-meta { color: #8E8E93; font-size: 13px; margin-bottom: 8px; }
 .popup-link { display: block; color: var(--ios-blue); text-decoration: none; font-weight: 500; }
+
+
+@media screen and (max-width: 600px) {
+  body, html {
+    width: 100%;
+    margin: 0;
+  }
+
+  header {
+    padding: 0 12px;
+  }
+  
+}
