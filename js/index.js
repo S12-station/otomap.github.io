@@ -77,7 +77,7 @@ async function loadMapData() {
         // その駅に紐づく作品をループして追加
         works.forEach((work, index) => {
           // 2件目以降は上部に細い線を入れて区切る
-          const separator = index > 0 ? `<hr style="border:0; border-top:1px dashed #ccc; margin: 10px 0;">` : '';
+          const separator = index > 0 ? `<hr style="border:0; border-top:1px dashed #ccc; margin: 2px 0;">` : '';
           const remarkHtml = work.remarks ? `<div style="font-size:12px; color:#666; margin-bottom:4px;">💬 ${work.remarks}</div>` : '';
           
           popupHtml += `
