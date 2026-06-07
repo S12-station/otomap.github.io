@@ -1,3 +1,4 @@
+// GASのウェブアプリURLをここに設定
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbz01EQuEGIaqjoyydvJLa-kAC2AzP0bpWr_55G4P418DoWwq7T_QwNCecCuYxlbxAqVSQ/exec';
 
 let allWorks = [];
@@ -52,10 +53,10 @@ async function loadData() {
       return {
         title: mad.title || 'タイトルなし',
         url: mad.url,
-        remarks: mad.remarks || '', // ← ここを追加
+        remarks: mad.remarks || '', 
         category: mad.category || '不明',
-        companyCd: String(companyCd), // フィルタリング用
-        lineCd: String(lineCd),       // フィルタリング用
+        companyCd: String(companyCd), 
+        lineCd: String(lineCd),       
         companyName: companyCd ? companyDict.get(String(companyCd)) : '不明な事業者',
         lineName: lineInfo ? lineInfo.name : '不明な路線',
         stationName: stInfo ? stInfo.name : '不明な駅',
@@ -127,13 +128,10 @@ function applyFilters() {
 }
 
 function renderList(works) {
-// js/search.js 内のリストを描画する関数（例: renderList）の中に以下を追加します
-
-function renderList(works) {
   const listEl = document.getElementById('workList');
-  const countEl = document.getElementById('resultCount'); // ★追加
+  const countEl = document.getElementById('resultCount');
 
-  // ★追加：現在の配列の長さを件数として表示
+  // 現在の配列の長さを件数として表示
   countEl.innerText = `該当: ${works.length} 件`;
 
   listEl.innerHTML = ''; // リストを一旦リセット
@@ -143,8 +141,7 @@ function renderList(works) {
     return;
   }
 
-  // ... (この下に既存の works.forEach(...) などのリスト生成処理が続きます)
-    works.forEach(work => {
+  works.forEach(work => {
     const li = document.createElement('li');
     li.className = 'work-item';
     
