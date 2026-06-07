@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=BIZ+UDGothic&family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+
 :root {
   --ios-bg: #F2F2F7;
   --ios-blue: #007AFF;
@@ -8,7 +12,7 @@
 
 body, html {
   margin: 0; padding: 0; height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif;
+  font-family: "Inter Tight", "BIZ UDGothic", sans-serif;
   background-color: var(--ios-bg);
   -webkit-font-smoothing: antialiased;
   color: #000;
@@ -16,7 +20,14 @@ body, html {
   margin-left: auto;
   margin-right: auto;
 }
-
+/* 追加：フォーム部品にフォントを継承させる */
+input, select, button, textarea {
+  font-family: inherit;
+}
+/* 追加：Leafletのデフォルトフォント設定を上書きする */
+.leaflet-container {
+  font-family: "Inter Tight", "BIZ UDGothic", sans-serif;
+}
 /* ナビゲーションバー */
 header {
   position: fixed;
@@ -49,11 +60,7 @@ header h1 {
   text-decoration: none;
 }
 
-.header-btn.add {
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 1;
-}
+
 
 .header-btn.back {
   display: flex;
@@ -139,7 +146,7 @@ main {
 .submit-btn:disabled { background-color: #A2C8F2; }
 
 /* ポップアップ */
-.leaflet-popup-content-wrapper { border-radius: 12px; }
+.leaflet-popup-content-wrapper { border-radius: 3px; }
 .popup-title { font-weight: bold; font-size: 15px; margin-bottom: 4px; }
 .popup-meta { color: #8E8E93; font-size: 13px; margin-bottom: 8px; }
 .popup-link { display: block; color: var(--ios-blue); text-decoration: none; font-weight: 500; }
@@ -147,7 +154,7 @@ main {
 
 @media screen and (max-width: 600px) {
   body, html {
-    width: 100%;
+    width: 90%;
     margin: 0;
   }
 
@@ -155,4 +162,16 @@ main {
     padding: 0 12px;
   }
   
+}
+
+.inter-tight {
+  font-family: "Inter Tight", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.biz-udgothic-regular {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }

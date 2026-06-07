@@ -127,13 +127,23 @@ function applyFilters() {
 }
 
 function renderList(works) {
+// js/search.js 内のリストを描画する関数（例: renderList）の中に以下を追加します
+
+function renderList(works) {
   const listEl = document.getElementById('workList');
-  listEl.innerHTML = '';
+  const countEl = document.getElementById('resultCount'); // ★追加
+
+  // ★追加：現在の配列の長さを件数として表示
+  countEl.innerText = `該当: ${works.length} 件`;
+
+  listEl.innerHTML = ''; // リストを一旦リセット
 
   if (works.length === 0) {
     listEl.innerHTML = '<li class="no-results">該当する作品が見つかりません。</li>';
     return;
   }
+
+  // ... (この下に既存の works.forEach(...) などのリスト生成処理が続きます)
     works.forEach(work => {
     const li = document.createElement('li');
     li.className = 'work-item';
