@@ -91,7 +91,7 @@ async function loadMapData() {
         popupHtml += `
           ${separator}
           <div style="margin-bottom: 5px;">
-            <div style="margin-bottom: 2px;"><a href="${work.url}" target="_blank" class="popup-title" style="font-weight: bold; color: var(--ios-blue); text-decoration: none;">${work.title}</a></div>
+            <div><a href="${work.url}" target="_blank" class="popup-title" style="font-weight: bold; color: var(--ios-blue); text-decoration: none;">${work.title}</a></div>
             ${remarkHtml}
             
           </div>

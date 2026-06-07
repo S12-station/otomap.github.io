@@ -198,8 +198,11 @@ document.getElementById('addForm').addEventListener('submit', async (e) => {
     
     if (result.status === 'success') {
       alert('登録が完了しました。');
-      // 成功時にマップ画面へ戻す場合はここのコメントアウトを外してください
-      // window.location.href = 'index.html';
+      
+      // ★追加：送信成功後にタイトル、URL、備考を空欄にする
+      document.getElementById('title').value = '';
+      document.getElementById('url').value = '';
+      document.getElementById('remarks').value = '';
     } else {
       alert('エラー: ' + result.message);
     }
